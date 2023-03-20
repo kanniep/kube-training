@@ -1,0 +1,12 @@
+projectName: kube-demo
+
+app:
+  image: kannie/kube-demo-web:latest
+  port: 5000
+  envs: {}
+  serviceType: NodePort
+
+db:
+  image: kannie/kube-demo-db:latest
+  port: 8000
+  serviceType: ClusterIP

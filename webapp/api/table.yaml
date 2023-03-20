@@ -1,0 +1,21 @@
+TableName: patients
+AttributeDefinitions:
+  - AttributeName: id
+    AttributeType: S
+  - AttributeName: checking_in
+    AttributeType: S
+  - AttributeName: first_name
+    AttributeType: S
+KeySchema:
+  - AttributeName: id
+    KeyType: HASH
+GlobalSecondaryIndexes:
+  - IndexName: NameCheckinIndex
+    KeySchema:
+      - AttributeName: checking_in
+        KeyType: HASH
+      - AttributeName: first_name
+        KeyType: RANGE
+    Projection:
+      ProjectionType: ALL
+BillingMode: PAY_PER_REQUEST

@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: kube-demo-db
+spec:
+  selector:
+    app: kube-demo-db
+  type: NodePort
+  ports:
+    - name: dynamo
+      port: 8000
+      targetPort: dynamo

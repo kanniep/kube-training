@@ -1,0 +1,28 @@
+{{- $appName := .Values.projectName -}}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ $appName }}-db
+spec:
+  selector:
+    app: {{ $appName }}-db
+  type: {{ .Values.db.serviceType }}
+  ports:
+    - name: dynamo
+      port: 8000
+      targetPort: dynamo
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ $appName }}
+spec:
+  selector:
+    app: {{ $appName }}
+  type: {{ .Values.app.serviceType }}
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http

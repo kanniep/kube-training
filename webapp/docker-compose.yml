@@ -1,0 +1,24 @@
+services:
+  kube-demo-web:
+    image: kannie/kube-demo-web:latest
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    # volumes:
+    #   - ./api:/app
+    # entrypoint: /app/scripts/dev-entrypoint.sh
+    ports:
+      - 80:5000
+    environment:
+      - FLASK_DEBUG=1
+      - DB_URL=http://kube-demo-db:8000
+    restart: unless-stopped
+
+  kube-demo-db:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "kannie/kube-demo-db:latest"
+    ports:
+      - "8000:8000"
+    # volumes:
+    #   - "./dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal

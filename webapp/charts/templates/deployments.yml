@@ -1,0 +1,60 @@
+{{- $appName := .Values.projectName -}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $appName }}-db
+  labels:
+    app: {{ $appName }}-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $appName }}-db
+  template:
+    metadata:
+      labels:
+        app: {{ $appName }}-db
+    spec:
+      containers:
+        - name: {{ $appName }}-db
+          image: {{ .Values.db.image }}
+          command: ["java"]
+          args: ["-Djava.library.path=./DynamoDBLocal_lib", "-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "./data"]
+          ports:
+            - name: dynamo
+              containerPort: {{ .Values.db.port }}
+      tolerations:
+        - key: "kwok.x-k8s.io/node"
+          operator: "Exists"
+          effect: "NoSchedule"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $appName }}
+  labels:
+    app: {{ $appName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ $appName }}
+    spec:
+      containers:
+        - name: {{ $appName }}
+          image: {{ .Values.app.image }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.app.port }}
+          env:
+            - name: DB_URL
+              value: http://{{ $appName }}-db.default.svc.cluster.local:8000
+      tolerations:
+        - key: "kwok.x-k8s.io/node"
+          operator: "Exists"
+          effect: "NoSchedule"

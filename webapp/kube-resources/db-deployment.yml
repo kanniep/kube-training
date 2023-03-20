@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-demo-db
+  labels:
+    app: kube-demo-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-demo-db
+  template:
+    metadata:
+      labels:
+        app: kube-demo-db
+    spec:
+      containers:
+        - name: kube-demo-db
+          image: kannie/kube-demo-db:latest
+          command: ["java"]
+          args: ["-Djava.library.path=./DynamoDBLocal_lib", "-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "./data"]
+          ports:
+            - name: dynamo
+              containerPort: 8000
+      tolerations:
+        - key: "kwok.x-k8s.io/node"
+          operator: "Exists"
+          effect: "NoSchedule"
